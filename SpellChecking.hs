@@ -1,24 +1,23 @@
-
+import Data.List
 --Addition,Subtitution,Deletions
-addition :: [Char] -> [Char] -> [[Char]]
-addition letters word = 
-	do
-		l <- letters
-		return (l:word)
+addition :: [Char] -> [[Char]]
+addition word = [left ++ c: right | (left,right) <- splits word, c <- letters]
+	where letters = ['a'..'z']
+	
 
-deletion :: [Char] -> [Char]
-deletion [] = []
-deletion (_:xs) = xs
+deletion :: [Char] -> [[Char]]
+deletion word = [left ++ tail right | (left,right) <- splits word, (not . null) right]
 
-subtitution :: [Char] -> [Char] -> [Char]
-subtitution _ [] = []
-subtitution letters (x:xs) = addition letters xs
+subtitution :: [Char] -> [[Char]]
+subtitution [] = []
+subtitution word = [left ++ c:tail right |(left,right) <- splits word, (not . null) right, c <- letters]
+	where letters = ['a'..'z']
 
 splits :: [Char] -> [([Char],[Char])]
 splits word = zip (inits word) (tails word)
 
-
-
+editOnce :: [Char] ->[[Char]]
+editOnce word = (addition word) ++ (deletion word) ++ (subtitution word)
 
 
 --Import File into List
