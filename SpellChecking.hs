@@ -1,4 +1,5 @@
 import Data.List
+import System.IO.Unsafe
 --Addition,Subtitution,Deletions
 addition :: [Char] -> [[Char]]
 addition word = [left ++ c: right | (left,right) <- splits word, c <- letters]
@@ -25,3 +26,7 @@ getWord :: FilePath -> IO [String]
 getWord path = do 
 	contents <- readFile path
 	return (lines contents)
+
+--SpellCheck
+sameElem :: [Char] -> FilePath -> [[Char]]
+sameElem word file = [x | x <- editOnce word, y <- unsafePerformIO $ getWord file , x == y ]
