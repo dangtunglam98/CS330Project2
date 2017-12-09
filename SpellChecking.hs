@@ -1,15 +1,28 @@
 
 --Addition,Subtitution,Deletions
-addition :: [String] -> [String] -> [String]
+addition :: [Char] -> [Char] -> [[Char]]
 addition letters word = 
 	do
 		l <- letters
 		return (l:word)
 
-deletion :: [String] -> [String]
+deletion :: [Char] -> [Char]
 deletion [] = []
 deletion (_:xs) = xs
 
-subtitution :: [String] -> [String] -> [String]
+subtitution :: [Char] -> [Char] -> [Char]
 subtitution _ [] = []
-subtitution letters (x:xs) = addition letters xs 
+subtitution letters (x:xs) = addition letters xs
+
+splits :: [Char] -> [([Char],[Char])]
+splits word = zip (inits word) (tails word)
+
+
+
+
+
+--Import File into List
+getWord :: FilePath -> IO [String]
+getWord path = do 
+	contents <- readFile path
+	return (lines contents)
