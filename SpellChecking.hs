@@ -21,10 +21,10 @@ editOnce word = (addition word) ++ (deletion word) ++ (subtitution word)
 
 removePunc :: String -> String
 removePunc str = [x | x <- str, not (x `elem` punc)]
-	where punc = ",.?!:;\"\'"
+	where punc = ",.?!:;\"\'#$%"
 
 internalDash :: String -> String
-internalDash str = [if x == "-" then " " else x | x <- str]
+internalDash str = [if (x == "-") || (x == "&") then " " else x | x <- str]
 
 
 
