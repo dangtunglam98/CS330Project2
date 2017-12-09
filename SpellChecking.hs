@@ -4,7 +4,6 @@ import System.IO.Unsafe
 addition :: [Char] -> [[Char]]
 addition word = [left ++ c: right | (left,right) <- splits word, c <- letters]
 	where letters = ['a'..'z']
-	
 
 deletion :: [Char] -> [[Char]]
 deletion word = [left ++ tail right | (left,right) <- splits word, (not . null) right]
@@ -20,10 +19,15 @@ splits word = zip (inits word) (tails word)
 editOnce :: [Char] ->[[Char]]
 editOnce word = (addition word) ++ (deletion word) ++ (subtitution word)
 
+removePunc :: String -> String
+removePunc str = [x | x <- str, not (x `elem` punc)]
+	where punc = ",.?!-:;\"\'"
+
+
 
 --Import File into List
 getWord :: FilePath -> IO [String]
-getWord path = do 
+getWord path = do
 	contents <- readFile path
 	return (lines contents)
 
