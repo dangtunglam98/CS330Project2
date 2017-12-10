@@ -53,3 +53,8 @@ getWord path = do
 --SpellCheck
 sameElem :: String -> FilePath -> [String]
 sameElem word file = [x | x <- editOnce word, y <- unsafePerformIO $ getWord file , x == y ]
+
+checkFile :: FilePath -> FilePath -> FilePath
+checkFile dic mis = writeFile "A.txt" (show x ++ ": " ++ show (sameElem x dic))
+	where 
+		x <- handleInput mis
