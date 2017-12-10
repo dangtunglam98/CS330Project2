@@ -42,11 +42,7 @@ toLowerString str = [if isAlpha x then toLower x else x | x <- str]
 handleInput :: FilePath -> IO [String]
 handleInput path = do
 	contents <- readFile path
-<<<<<<< HEAD
 	let split = splitOn " " (toLowerString (internalHandle (removePunc contents)))
-=======
-	let split = splitOn " "  (toLowerString (internalHandle (removePunc (contents))))
->>>>>>> 6ef89b0893e0f801ca37735de1629c33cf803137
 	let ls = [ x | x <- split, not (wordNoLetters x) ]
 	return ls
 
@@ -57,18 +53,9 @@ getDiction path = do
 	return (lines contents)
 
 --SpellCheck
-sameElem :: [String] -> FilePath -> [String]
-sameElem words file = [x | x <- words, y <- unsafePerformIO $ getDiction file , x == y ]
 
-
-getBestTen :: String -> FilePath -> [String]
-getBestTen word dict = 	take 10 alternatives
-	where alternatives = sameElem [word] dict ++ sameElem (editOnce word) dict ++ [word]
-
-
-
-checkInterSection10 :: [String] -> [String] -> Set.Set String
-checkInterSection10 mis dic = Set.take 10 (Set.intersection (Set.fromList mis) (Set.fromList dic ))
+getInterSection10 :: [String] -> [String] -> Set.Set String
+getInterSection10 mis dic = Set.take 10 (Set.intersection (Set.fromList mis) (Set.fromList dic ))
 
 --checkFile :: FilePath -> FilePath -> FilePath ->
 checkFile dict mis result = do
@@ -76,6 +63,6 @@ checkFile dict mis result = do
 	diction <- getDiction dict
 	--let needFix = [x | x <- contents, not (Set.isSubsetOf (Set.fromList [x]) (Set.fromList diction))]
 	let needFix = [x | x <- contents, not (x `elem` diction)]
-	let fixed = [unwords (x : ":" : (Set.toList ((checkInterSection10 (editNextStep (editOnce x)) diction)))) | x <- needFix ]
+	let fixed = [unwords (x : ":" : (Set.toList ((getInterSection10 (editNextStep (editOnce x)) diction)))) | x <- needFix ]
 	writeFile result (unlines fixed)
 	--return fixed
