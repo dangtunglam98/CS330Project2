@@ -42,10 +42,13 @@ toLowerString str = [if isAlpha x then toLower x else x | x <- str]
 handleInput :: FilePath -> IO [String]
 handleInput path = do
 	contents <- readFile path
+<<<<<<< HEAD
 	let split = splitOn " " (toLowerString (internalHandle (removePunc contents)))
+=======
+	let split = splitOn " "  (toLowerString (internalHandle (removePunc (contents))))
+>>>>>>> 6ef89b0893e0f801ca37735de1629c33cf803137
 	let ls = [ x | x <- split, not (wordNoLetters x) ]
 	return ls
-
 
 --Import Dictionary into List
 getDiction :: FilePath -> IO [String]
@@ -67,6 +70,7 @@ getBestTen word dict = 	take 10 alternatives
 checkInterSection10 :: [String] -> [String] -> Set.Set String
 checkInterSection10 mis dic = Set.take 10 (Set.intersection (Set.fromList mis) (Set.fromList dic ))
 
+--checkFile :: FilePath -> FilePath -> FilePath ->
 checkFile dict mis result = do
 	contents <- handleInput mis
 	diction <- getDiction dict
@@ -74,3 +78,4 @@ checkFile dict mis result = do
 	let needFix = [x | x <- contents, not (x `elem` diction)]
 	let fixed = [unwords (x : ":" : (Set.toList ((checkInterSection10 (editNextStep (editOnce x)) diction)))) | x <- needFix ]
 	writeFile result (unlines fixed)
+	--return fixed
