@@ -19,8 +19,11 @@ subtitution word = [left ++ c:tail right |(left,right) <- splits word, (not . nu
 splits :: String -> [(String,String)]
 splits word = zip (inits word) (tails word)
 
-editOnce :: String ->[String]
+editOnce :: String -> [String]
 editOnce word = (addition word) ++ (deletion word) ++ (subtitution word)
+
+editNextStep :: [String] -> [String]
+editNextStep ls = [ x | e <- ls, x <- (editOnce e) ]
 
 removePunc :: String -> String
 removePunc str = [x | x <- str, not (x `elem` punc)]
