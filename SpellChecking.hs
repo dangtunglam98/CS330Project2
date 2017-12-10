@@ -47,17 +47,24 @@ handleInput path = do
 	return ls
 
 
---Import File into List
-getWord :: FilePath -> IO [String]
-getWord path = do
+--Import Dictionary into List
+getDiction :: FilePath -> IO [String]
+getDiction path = do
 	contents <- readFile path
 	return (lines contents)
 
 --SpellCheck
 sameElem :: String -> FilePath -> [String]
-sameElem word file = [x | x <- editOnce word, y <- unsafePerformIO $ getWord file , x == y ]
+sameElem word file = [x | x <- editOnce word, y <- unsafePerformIO $ getDiction file , x == y ]
 
-checkFile :: FilePath -> FilePath -> FilePath
-checkFile dic mis = writeFile "A.txt" (show x ++ ": " ++ show (sameElem x dic))
-	where 
-		x <- handleInput mis
+getBestTen :: [String] -> [String] -> [String]
+getBestTen wordls dict
+	| (length [x | x <- wordls, x `elem` dict]) < 10 = getBestTen (editNextStep wordls) dict
+	| otherwise = take 10 [x | x <- wordls, x `elem` dict]
+
+checkFile dict mis result = do
+	diction <- getDiction dict
+	contents <- handleInput mis
+	let needFix = [x | x <- contents, not (x `elem` diction)]
+	let fixed = [unwords (x : ":" : (getBestTen (editOnce x) diction)) | x <- needFix]
+	writeFile result (unlines fixed)
