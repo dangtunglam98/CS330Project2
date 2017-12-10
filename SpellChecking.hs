@@ -20,14 +20,14 @@ splits :: String -> [(String,String)]
 splits word = zip (inits word) (tails word)
 
 editOnce :: String -> [String]
-editOnce word = (addition word) ++ (deletion word) ++ (subtitution word)
+editOnce word = (subtitution word) ++ (addition word) ++ (deletion word)
 
 editNextStep :: [String] -> [String]
 editNextStep ls = [ x | e <- ls, x <- (editOnce e) ]
 
 removePunc :: String -> String
 removePunc str = [x | x <- str, not (x `elem` punc)]
-	where punc = ",.?!:;\"\'#$%"
+	where punc = ",.?!:;\"\'#$%\n"
 
 internalHandle :: String -> String
 internalHandle str = [if (x == '-') || (x == '&') then ' ' else x | x <- str]
@@ -42,10 +42,9 @@ toLowerString str = [if isAlpha x then toLower x else x | x <- str]
 handleInput :: FilePath -> IO [String]
 handleInput path = do
 	contents <- readFile path
-	let split = splitOn " " (removePunc (toLowerString (internalHandle contents)))
+	let split = splitOn " "  (toLowerString (internalHandle (removePunc (contents))))
 	let ls = [ x | x <- split, not (wordNoLetters x) ]
 	return ls
-
 
 --Import Dictionary into List
 getDiction :: FilePath -> IO [String]
@@ -62,9 +61,11 @@ getBestTen wordls dict
 	| (length [x | x <- wordls, x `elem` dict]) < 10 = getBestTen (editNextStep wordls) dict
 	| otherwise = take 10 [x | x <- wordls, x `elem` dict]
 
+--checkFile :: FilePath -> FilePath -> FilePath ->
 checkFile dict mis result = do
 	diction <- getDiction dict
 	contents <- handleInput mis
 	let needFix = [x | x <- contents, not (x `elem` diction)]
 	let fixed = [unwords (x : ":" : (getBestTen (editOnce x) diction)) | x <- needFix]
 	writeFile result (unlines fixed)
+	--return fixed
