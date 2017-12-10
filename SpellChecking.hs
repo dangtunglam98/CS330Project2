@@ -1,6 +1,7 @@
 import Data.List
 import System.IO.Unsafe
 import Data.Char
+import Data.List.Split
 
 --Addition,Subtitution,Deletions
 addition :: String -> [String]
@@ -31,6 +32,17 @@ internalHandle str = [if (x == '-') || (x == '&') then ' ' else x | x <- str]
 wordNoLetters :: String -> Bool
 wordNoLetters "" = True
 wordNoLetters str = (not (isAlpha (head str))) && (wordNoLetters (tail str))
+
+toLowerString :: String -> String
+toLowerString str = [if isAlpha x then toLower x else x | x <- str]
+
+handleInput :: FilePath -> IO [String]
+handleInput path = do
+	contents <- readFile path
+	let split = splitOn " " (removePunc (toLowerString (internalHandle contents)))
+	let ls = [ x | x <- split, not (wordNoLetters x) ]
+	return ls
+
 
 --Import File into List
 getWord :: FilePath -> IO [String]
