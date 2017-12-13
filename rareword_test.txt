@@ -1,0 +1,3 @@
+biblioklpt : biblioklept
+acnesti : amnestic amnesty
+neldrop : bedrop dewdrop meldrop
