@@ -20,7 +20,7 @@ splits :: String -> [(String,String)] -- Return a list of multiple components of
 splits word = zip (inits word) (tails word)
 
 --Return a list of editted versions of a word
-editOnce :: String -> [String]  
+editOnce :: String -> [String]
 editOnce word = (subtitution word) ++ (addition word) ++ (deletion word)
 
 editNextStep :: [String] -> [String]
@@ -56,9 +56,28 @@ getDiction path = do
 	return (lines contents)
 
 --SpellCheck
-
 getInterSection10 :: [String] -> [String] -> Set.Set String
 getInterSection10 mis dic = Set.take 10 (Set.intersection (Set.fromList mis) (Set.fromList dic ))
+
+
+levDistance :: String -> String -> Int
+levDistance xs ys = levMemo ! (n, m)
+	where levMemo = array ((0,0),(n,m)) [((i,j),lev i j) | i <- [0..n], j <- [0..m]]
+		 n = length xs
+		 m = length ys
+		 xa = listArray (1, n) xs
+		 ya = listArray (1, m) ys
+		 lev 0 v = v
+		 lev u 0 = u
+		 lev u v
+		   | xa ! u == ya ! v = levMemo ! (u-1, v-1)
+		   | otherwise        = 1 + minimum [levMemo ! (u, v-1),
+		                                     levMemo ! (u-1, v),
+		                                     levMemo ! (u-1, v-1)]
+
+--bestLevDistance :: Int -> String -> [String] -> [String]
+bestLevDistance num str ls = take num [levDistance str x | x <- ls]
+
 
 spellCheck dict mis result = do -- get dictionary file , mispelled file and name of output file
 	contents <- handleInput mis
