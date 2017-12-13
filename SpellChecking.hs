@@ -60,6 +60,15 @@ getDiction path = do
 getInterSection10 :: [String] -> [String] -> Set.Set String
 getInterSection10 mis dic = Set.take 10 (Set.intersection (Set.fromList mis) (Set.fromList dic ))
 
+spellCheckTwoDistance dict mis result = do -- get dictionary file , mispelled file and name of output file
+	contents <- handleInput mis
+	diction <- getDiction dict
+	let needFix = [x | x <- contents, not (x `elem` diction)] --get words that need fixing
+	let fixed = [unwords (x : ":" : (Set.toList ((getInterSection10 (editNextStep (editOnce x)) diction)))) | x <- needFix ] -- Return mispelled word along with a list of correct spelling of the word
+	writeFile result (unlines fixed) -- Write it into a file
+
+-- This is another method for the assignment
+
 --Function takes two words and return the Levenshtein distance between them
 levDistance :: String -> String -> Int
 levDistance xs ys = levMemo ! (n, m)
@@ -84,13 +93,6 @@ sortTup ls = sortBy (comparing fst) ls
 --Return the list of words from input list of words with lowest Levenshtein distance from the input word
 bestLevDistance :: Int -> String -> [String] -> [String]
 bestLevDistance num str dic = map (snd) (take num (sortTup [(levDistance str x, x) | x <- dic]))
-
-spellCheckTwoDistance dict mis result = do -- get dictionary file , mispelled file and name of output file
-	contents <- handleInput mis
-	diction <- getDiction dict
-	let needFix = [x | x <- contents, not (x `elem` diction)] --get words that need fixing
-	let fixed = [unwords (x : ":" : (Set.toList ((getInterSection10 (editNextStep (editOnce x)) diction)))) | x <- needFix ] -- Return mispelled word along with a list of correct spelling of the word
-	writeFile result (unlines fixed) -- Write it into a file
 
 spellCheckBestLev dict mis result = do -- get dictionary file , mispelled file and name of output file
 	contents <- handleInput mis
