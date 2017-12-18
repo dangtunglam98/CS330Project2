@@ -1,7 +1,6 @@
 import Data.List
 import Data.Ord
 import Data.Char
-import Data.List.Split
 import Data.Array
 import qualified Data.Set as Set
 --Addition,Subtitution,Deletions
@@ -43,10 +42,20 @@ toLowerString :: String -> String -- Return the lowercase version of the word
 toLowerString str = [if isAlpha x then toLower x else x | x <- str]
 
 -- Import test file into a List
+
+splitOnSpace :: String -> [String]
+splitOnSpace [] = [""]
+splitOnSpace (x:xs)
+   | x == ' ' = "" : rest
+   | otherwise = (x : head rest) : tail rest
+   where
+       rest = splitOnSpace xs 
+
+
 handleInput :: FilePath -> IO [String]
 handleInput path = do
 	contents <- readFile path
-	let split = splitOn " " (toLowerString (internalHandle (removePunc contents)))
+	let split = splitOnSpace (toLowerString (internalHandle (removePunc contents)))
 	let ls = [ x | x <- split, not (wordNoLetters x) ]
 	return ls
 
